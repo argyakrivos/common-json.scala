@@ -3,9 +3,16 @@ package com.blinkbox.books.json
 import java.net.{URL, URI}
 
 import org.joda.time.{DateTimeZone, DateTime}
-import org.joda.time.format.ISODateTimeFormat
+import org.joda.time.format.{DateTimeFormatter, DateTimeFormatterBuilder, ISODateTimeFormat}
 import org.json4s.{Serializer, CustomSerializer}
 import org.json4s.JsonAST.{JNull, JString}
+
+private object JsonDateTimeFormat {
+  val dateTimeOptionalMillis: DateTimeFormatter = {
+    val parsers = Array(ISODateTimeFormat.dateTime.getParser, ISODateTimeFormat.dateTimeNoMillis.getParser)
+    new DateTimeFormatterBuilder().append(ISODateTimeFormat.dateTime.getPrinter, parsers).toFormatter
+  }
+}
 
 object Serializers {
 
@@ -17,10 +24,10 @@ object Serializers {
    * serializer, and can end up wrong by an hour in BST as it goes via a java.util.DateTime).
    */
   object ISODateTimeSerializer extends CustomSerializer[DateTime](_ => ({
-    case JString(s) => ISODateTimeFormat.dateTime.parseDateTime(s).withZone(DateTimeZone.UTC)
+    case JString(s) => JsonDateTimeFormat.dateTimeOptionalMillis.parseDateTime(s).withZone(DateTimeZone.UTC)
     case JNull => null
   }, {
-    case d: DateTime => JString(ISODateTimeFormat.dateTime.print(d.withZone(DateTimeZone.UTC)))
+    case d: DateTime => JString(JsonDateTimeFormat.dateTimeOptionalMillis.print(d.withZone(DateTimeZone.UTC)))
   }))
 
   object URISerializer extends CustomSerializer[URI](_ => ( {

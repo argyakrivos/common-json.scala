@@ -17,22 +17,28 @@ class DefaultFormatsTests extends FunSuite {
 
   implicit val formats = DefaultFormats
 
-  test("Serializes and deserializes a Joda DateTime in UTC") {
+  test("Serializes and deserializes a Joda DateTime with milliseconds in UTC") {
     val obj = ObjectWithDateTime(new DateTime(2014, 7, 12, 11, 2, 47, 183, DateTimeZone.UTC))
     val json = write(obj)
     assert(json == """{"value":"2014-07-12T11:02:47.183Z"}""")
     assert(obj == read[ObjectWithDateTime](json))
   }
 
-  test("Serializes a Joda DateTime in a non-UTC zone to UTC") {
+  test("Serializes a Joda DateTime with milliseconds in a non-UTC zone to UTC") {
     val obj = ObjectWithDateTime(new DateTime(2014, 7, 12, 11, 2, 47, 183, DateTimeZone.forOffsetHours(-3)))
     val json = write(obj)
     assert(json == """{"value":"2014-07-12T14:02:47.183Z"}""")
   }
 
-  test("Deserializes a Joda DateTime in a non-UTC zone to UTC") {
+  test("Deserializes a Joda DateTime with milliseconds in a non-UTC zone to UTC") {
     val obj = ObjectWithDateTime(new DateTime(2014, 7, 12, 11, 2, 47, 183, DateTimeZone.UTC))
     val json = """{"value":"2014-07-12T14:02:47.183+03:00"}"""
+    assert(obj == read[ObjectWithDateTime](json))
+  }
+
+  test("Deserializes a Joda DateTime without milliseconds") {
+    val obj = ObjectWithDateTime(new DateTime(2014, 7, 12, 11, 2, 47, DateTimeZone.UTC))
+    val json = """{"value":"2014-07-12T11:02:47Z"}"""
     assert(obj == read[ObjectWithDateTime](json))
   }
 
