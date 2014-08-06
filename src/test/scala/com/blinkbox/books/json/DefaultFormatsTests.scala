@@ -3,6 +3,7 @@ package com.blinkbox.books.json
 import java.net.{URL, URI}
 
 import org.joda.time.{DateTimeZone, DateTime}
+import org.json4s.MappingException
 import org.json4s.jackson.Serialization.{read, write}
 import org.scalatest.FunSuite
 
@@ -17,23 +18,46 @@ class DefaultFormatsTests extends FunSuite {
 
   implicit val formats = DefaultFormats
 
-  test("Serializes and deserializes a Joda DateTime in UTC") {
+  test("Serializes and deserializes a DateTime with milliseconds in UTC") {
     val obj = ObjectWithDateTime(new DateTime(2014, 7, 12, 11, 2, 47, 183, DateTimeZone.UTC))
     val json = write(obj)
     assert(json == """{"value":"2014-07-12T11:02:47.183Z"}""")
     assert(obj == read[ObjectWithDateTime](json))
   }
 
-  test("Serializes a Joda DateTime in a non-UTC zone to UTC") {
+  test("Serializes a DateTime with milliseconds in a non-UTC zone to UTC") {
     val obj = ObjectWithDateTime(new DateTime(2014, 7, 12, 11, 2, 47, 183, DateTimeZone.forOffsetHours(-3)))
     val json = write(obj)
     assert(json == """{"value":"2014-07-12T14:02:47.183Z"}""")
   }
 
-  test("Deserializes a Joda DateTime in a non-UTC zone to UTC") {
+  test("Deserializes a DateTime with milliseconds in a non-UTC zone to UTC") {
     val obj = ObjectWithDateTime(new DateTime(2014, 7, 12, 11, 2, 47, 183, DateTimeZone.UTC))
     val json = """{"value":"2014-07-12T14:02:47.183+03:00"}"""
     assert(obj == read[ObjectWithDateTime](json))
+  }
+
+  test("Deserializes a DateTime without milliseconds") {
+    val obj = ObjectWithDateTime(new DateTime(2014, 7, 12, 11, 2, 47, DateTimeZone.UTC))
+    val json = """{"value":"2014-07-12T11:02:47Z"}"""
+    assert(obj == read[ObjectWithDateTime](json))
+  }
+
+  test("Does not deserialize a DateTime without a time zone") {
+    intercept[MappingException] { read[ObjectWithDateTime]("""{"value":"2014-07-12T11:02:47"}""") }
+  }
+
+  test("Does not deserialize a DateTime without a 'T' character between the date and time") {
+    intercept[MappingException] { read[ObjectWithDateTime]("""{"value":"2014-07-12 11:02:47Z"}""") }
+  }
+
+  test("Does not deserialize a DateTime without a time") {
+    intercept[MappingException] { read[ObjectWithDateTime]("""{"value":"2014-07-12"}""") }
+  }
+
+  test("Does not deserialize non-ISO DateTime formats") {
+    intercept[MappingException] { read[ObjectWithDateTime]("""{"value":"Fri, 09 Sep 2005 13:51:39 -0700"}""") }
+    intercept[MappingException] { read[ObjectWithDateTime]("""{"value":"9/9/2005 1:51:39 PM"}""") }
   }
 
   test("Serializes and deserializes objects with absolute URIs") {
