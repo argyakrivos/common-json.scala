@@ -1,11 +1,11 @@
 package com.blinkbox.books.json
 
-import java.net.{URL, URI}
+import java.net.{URI, URL}
 
-import org.joda.time.{DateTimeZone, DateTime}
 import org.joda.time.format.{DateTimeFormatter, DateTimeFormatterBuilder, ISODateTimeFormat}
-import org.json4s.{Serializer, CustomSerializer}
+import org.joda.time.{DateTime, DateTimeZone, LocalDate}
 import org.json4s.JsonAST.{JNull, JString}
+import org.json4s.{CustomSerializer, Serializer}
 
 private object JsonDateTimeFormat {
   val dateTimeOptionalMillis: DateTimeFormatter = {
@@ -16,7 +16,7 @@ private object JsonDateTimeFormat {
 
 object Serializers {
 
-  val all: List[Serializer[_]] = ISODateTimeSerializer :: URISerializer :: URLSerializer :: Nil
+  val all: List[Serializer[_]] = ISODateTimeSerializer :: LocalDateSerializer :: URISerializer :: URLSerializer :: Nil
 
   /**
    * Serializer for Joda DateTime objects in the ISO date format, which ensures that the time zone
@@ -28,6 +28,18 @@ object Serializers {
     case JNull => null
   }, {
     case d: DateTime => JString(JsonDateTimeFormat.dateTimeOptionalMillis.print(d.withZone(DateTimeZone.UTC)))
+  }))
+
+  /**
+   * Serializer for Joda LocalDate objects in the ISO date format, which ignores any time zone in
+   * the instance (i.e. 2014-07-23 in a non-UTC chronology will still be serialized as 2014-07-23
+   * even if the date would be in a different day when the time zone offset is taken into account).
+   */
+  object LocalDateSerializer extends CustomSerializer[LocalDate](_ => ({
+    case JString(s) => ISODateTimeFormat.yearMonthDay.parseLocalDate(s)
+    case JNull => null
+  }, {
+    case d: LocalDate => JString(ISODateTimeFormat.yearMonthDay.print(d))
   }))
 
   object URISerializer extends CustomSerializer[URI](_ => ( {
