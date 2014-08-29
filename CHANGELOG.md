@@ -1,5 +1,14 @@
 # Change log
 
+## 0.2.1 ([#4](https://git.mobcastdev.com/Platform/common-json/pull/4) 2014-08-29 15:49:39)
+
+Cross compile to Scala 2.11
+
+### Improvements
+
+- Now cross-compiles to Scala 2.11.
+- Updated dependencies to latest versions.
+
 ## 0.2.0 ([#3](https://git.mobcastdev.com/Platform/common-json/pull/3) 2014-08-21 12:52:46)
 
 Added support for serializing LocalDate instances
