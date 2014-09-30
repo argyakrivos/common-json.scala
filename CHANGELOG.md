@@ -1,5 +1,13 @@
 # Change log
 
+## 0.2.2 ([#5](https://git.mobcastdev.com/Platform/common-json/pull/5) 2014-09-30 09:53:57)
+
+Added Json4sExtensions
+
+### Improvements
+
+* Added some common json4s extensions for: removing and overwriting direct fields, along with sha1 hashing of a json
+
 ## 0.2.1 ([#4](https://git.mobcastdev.com/Platform/common-json/pull/4) 2014-08-29 15:49:39)
 
 Cross compile to Scala 2.11
