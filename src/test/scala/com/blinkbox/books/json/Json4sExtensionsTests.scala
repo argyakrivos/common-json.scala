@@ -34,9 +34,8 @@ class Json4sExtensionsTests extends FunSuite with JsonMethods {
   }
 
   test("The sha1 hash of two identical json documents should be the same") {
-    val j1: JValue = ("f1" -> "a") ~ ("f2" -> "b")
-    val j2: JValue = ("f1" -> "a") ~ ("f2" -> "b")
-    assert(j1.sha1 == j2.sha1)
+    def j: JValue = ("f1" -> "a") ~ ("f2" -> "b")
+    assert(j.sha1 == j.sha1)
   }
 
   test("The sha1 hash of two different json documents should not be the same") {
