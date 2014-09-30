@@ -11,10 +11,10 @@ scalacOptions := Seq("-unchecked", "-deprecation", "-feature", "-encoding", "utf
 libraryDependencies ++= {
   val json4sV = "3.2.10"
   Seq(
-    "joda-time"           %   "joda-time"         % "2.4",
-    "org.joda"            %   "joda-convert"      % "1.7",
-    "org.json4s"          %%  "json4s-jackson"    % json4sV,
-    "org.json4s"          %%  "json4s-ext"        % json4sV,
-    "com.blinkbox.books"  %%  "common-scala-test" % "0.2.3" % "test"
+    "joda-time"          %  "joda-time"         % "2.4",
+    "org.joda"           %  "joda-convert"      % "1.7",
+    "org.json4s"         %% "json4s-jackson"    % json4sV,
+    "org.json4s"         %% "json4s-ext"        % json4sV,
+    "com.blinkbox.books" %% "common-scala-test" % "0.3.0"  % Test
   )
 }
