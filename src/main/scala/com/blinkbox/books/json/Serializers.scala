@@ -7,9 +7,6 @@ import org.joda.time.{DateTime, DateTimeZone, LocalDate}
 import org.json4s.JsonAST.{JNull, JString}
 import org.json4s.{MappingException, CustomSerializer, Serializer}
 
-import scala.util.Try
-import scala.util.control.NonFatal
-
 private object JsonDateTimeFormat {
   val dateTimeOptionalMillis: DateTimeFormatter = {
     val parsers = Array(ISODateTimeFormat.dateTime.getParser, ISODateTimeFormat.dateTimeNoMillis.getParser)
