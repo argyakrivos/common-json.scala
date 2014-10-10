@@ -5,7 +5,9 @@ import java.net.{URI, URL}
 import org.joda.time.format.{DateTimeFormatter, DateTimeFormatterBuilder, ISODateTimeFormat}
 import org.joda.time.{DateTime, DateTimeZone, LocalDate}
 import org.json4s.JsonAST.{JNull, JString}
-import org.json4s.{CustomSerializer, Serializer}
+import org.json4s.{MappingException, CustomSerializer, Serializer}
+
+import scala.util.Try
 
 private object JsonDateTimeFormat {
   val dateTimeOptionalMillis: DateTimeFormatter = {
@@ -24,7 +26,11 @@ object Serializers {
    * serializer, and can end up wrong by an hour in BST as it goes via a java.util.DateTime).
    */
   object ISODateTimeSerializer extends CustomSerializer[DateTime](_ => ({
-    case JString(s) => JsonDateTimeFormat.dateTimeOptionalMillis.parseDateTime(s).withZone(DateTimeZone.UTC)
+    case JString(s) =>
+      Try(JsonDateTimeFormat.dateTimeOptionalMillis.parseDateTime(s).withZone(DateTimeZone.UTC))
+        .toOption.getOrElse(
+          throw MappingException(s"'$s' is not a valid ISO date", new IllegalArgumentException(s"'$s' is not a valid ISO date"))
+        )
     case JNull => null
   }, {
     case d: DateTime => JString(JsonDateTimeFormat.dateTimeOptionalMillis.print(d.withZone(DateTimeZone.UTC)))

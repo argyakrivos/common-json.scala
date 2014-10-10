@@ -12,3 +12,6 @@ project/plugins/project/
 # Scala-IDE specific
 .scala_dependencies
 .idea/
+
+# intellij
+atlassian-ide-plugin.xml
