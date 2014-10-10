@@ -39,6 +39,12 @@ class DefaultFormatsTests extends FunSuite {
     assert(obj == read[ObjectWithDateTime](json))
   }
 
+  test("uses sane error messages when deserializing fails") {
+    val json = """{"value":"Ceci n'est pas un jour"}"""
+    val ex = intercept[MappingException]{read[ObjectWithDateTime](json)}
+    assert(ex.getMessage == "No usable value for value\n'Ceci n'est pas un jour' is not a valid ISO date")
+  }
+
   test("Deserializes a DateTime without milliseconds") {
     val obj = ObjectWithDateTime(new DateTime(2014, 7, 12, 11, 2, 47, DateTimeZone.UTC))
     val json = """{"value":"2014-07-12T11:02:47Z"}"""
