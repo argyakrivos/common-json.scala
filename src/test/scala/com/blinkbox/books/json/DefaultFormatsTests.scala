@@ -53,7 +53,7 @@ class DefaultFormatsTests extends FunSuite {
   }
 
   test("Does not deserialize a DateTime without a time zone") {
-   intercept[MappingException] { read[ObjectWithDateTime]("""{"value":"2014-07-12T11:02:47"}""") }
+    intercept[MappingException] { read[ObjectWithDateTime]("""{"value":"2014-07-12T11:02:47"}""") }
   }
 
   test("Does not deserialize a DateTime without a 'T' character between the date and time") {

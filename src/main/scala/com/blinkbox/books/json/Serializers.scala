@@ -8,6 +8,7 @@ import org.json4s.JsonAST.{JNull, JString}
 import org.json4s.{MappingException, CustomSerializer, Serializer}
 
 import scala.util.Try
+import scala.util.control.NonFatal
 
 private object JsonDateTimeFormat {
   val dateTimeOptionalMillis: DateTimeFormatter = {
@@ -27,10 +28,11 @@ object Serializers {
    */
   object ISODateTimeSerializer extends CustomSerializer[DateTime](_ => ({
     case JString(s) =>
-      Try(JsonDateTimeFormat.dateTimeOptionalMillis.parseDateTime(s).withZone(DateTimeZone.UTC))
-        .toOption.getOrElse(
-          throw MappingException(s"'$s' is not a valid ISO date", new IllegalArgumentException(s"'$s' is not a valid ISO date"))
-        )
+      try {
+        JsonDateTimeFormat.dateTimeOptionalMillis.parseDateTime(s).withZone(DateTimeZone.UTC)
+      } catch {
+        case e: Exception => throw MappingException(s"'$s' is not a valid ISO date", e)
+      }
     case JNull => null
   }, {
     case d: DateTime => JString(JsonDateTimeFormat.dateTimeOptionalMillis.print(d.withZone(DateTimeZone.UTC)))
