@@ -1,5 +1,15 @@
 # Change log
 
+## 0.2.4 ([#8](https://git.mobcastdev.com/Platform/common-json/pull/8) 2014-11-24 13:57:54)
+
+Updated dependencies
+
+### Improvements
+
+- Updated version dependencies
+- Changed SBT file to multi-project style
+- Now only supports scala 2.11
+
 ## 0.2.3 ([#7](https://git.mobcastdev.com/Platform/common-json/pull/7) 2014-10-10 13:50:04)
 
 Sane error responses when failing to parse JSON datetime
