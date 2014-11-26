@@ -9,6 +9,10 @@ import scala.language.implicitConversions
 object Json4sExtensions {
   implicit class RichJValue(val v: JValue) extends JsonMethods {
     def removeDirectField(key: String): JValue = v.remove(_ == v \ key)
+    def removeDirectFields(key: String*): JValue = {
+      val fields = key.map(v \ _)
+      v.remove(fields.contains(_))
+    }
     def overwriteDirectField(key: String, value: JValue) = {
       val newKey: JValue = key -> value
       removeDirectField(key).merge(newKey)

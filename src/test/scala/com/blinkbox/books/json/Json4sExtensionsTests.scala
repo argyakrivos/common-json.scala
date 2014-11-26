@@ -1,7 +1,7 @@
 package com.blinkbox.books.json
 
 import com.blinkbox.books.json.Json4sExtensions._
-import org.json4s.JsonAST.{JString, JNothing, JValue}
+import org.json4s.JsonAST.{JNothing, JString, JValue}
 import org.json4s.JsonDSL._
 import org.json4s.jackson.JsonMethods
 import org.scalatest.FunSuite
@@ -9,7 +9,8 @@ import org.scalatest.FunSuite
 class Json4sExtensionsTests extends FunSuite with JsonMethods {
   val json: JValue =
     ("details" -> (("name" -> "John") ~ ("surname" -> "Smith") ~ ("age" -> 20))) ~
-    ("name" -> "John Smith")
+    ("name" -> "John Smith") ~
+    ("test" -> ("name" -> "test"))
 
   test("Removing a direct field should not remove any other fields with the same name") {
     val result = json.removeDirectField("name")
@@ -20,6 +21,13 @@ class Json4sExtensionsTests extends FunSuite with JsonMethods {
   test("Removing a direct field that does not exist should not change the json") {
     val result = json.removeDirectField("whatever")
     assert(result == json)
+  }
+
+  test("Removing multiple direct fields should only remove direct fields") {
+    val result = json.removeDirectFields("name", "test")
+    assert(result \ "details" == (("name" -> "John") ~ ("surname" -> "Smith") ~ ("age" -> 20)))
+    assert(result \ "test" == JNothing)
+    assert(result \ "name" == JNothing)
   }
 
   test("Overwriting a direct field should not replace any other fields with the same name") {
