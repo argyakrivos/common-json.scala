@@ -1,6 +1,7 @@
 package com.blinkbox.books.json
 
 import java.net.{URI, URL}
+import java.util.UUID
 
 import org.joda.time.chrono.ISOChronology
 import org.joda.time.{DateTime, DateTimeZone, LocalDate}
@@ -13,6 +14,7 @@ object DefaultFormatsTests {
   case class ObjectWithLocalDate(value: LocalDate)
   case class ObjectWithURI(value: URI)
   case class ObjectWithURL(value: URL)
+  case class ObjectWithUUID(value: UUID)
 }
 
 class DefaultFormatsTests extends FunSuite {
@@ -107,6 +109,14 @@ class DefaultFormatsTests extends FunSuite {
     val json = write(obj)
     assert(json == """{"value":"http://localhost:8080/somepath"}""")
     assert(obj == read[ObjectWithURL](json))
+  }
+
+  test("Serializes and deserializes objects with UUIDs") {
+    val uuid = UUID.randomUUID()
+    val obj = ObjectWithUUID(uuid)
+    val json = write(obj)
+    assert(json == s"""{"value":"${uuid.toString}"}""")
+    assert(obj == read[ObjectWithUUID](json))
   }
 
 }

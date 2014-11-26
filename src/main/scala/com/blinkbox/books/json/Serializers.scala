@@ -1,11 +1,12 @@
 package com.blinkbox.books.json
 
 import java.net.{URI, URL}
+import java.util.UUID
 
 import org.joda.time.format.{DateTimeFormatter, DateTimeFormatterBuilder, ISODateTimeFormat}
 import org.joda.time.{DateTime, DateTimeZone, LocalDate}
 import org.json4s.JsonAST.{JNull, JString}
-import org.json4s.{MappingException, CustomSerializer, Serializer}
+import org.json4s.{CustomSerializer, MappingException, Serializer}
 
 private object JsonDateTimeFormat {
   val dateTimeOptionalMillis: DateTimeFormatter = {
@@ -16,7 +17,8 @@ private object JsonDateTimeFormat {
 
 object Serializers {
 
-  val all: List[Serializer[_]] = ISODateTimeSerializer :: LocalDateSerializer :: URISerializer :: URLSerializer :: Nil
+  val all: List[Serializer[_]] =
+    ISODateTimeSerializer :: LocalDateSerializer :: URISerializer :: URLSerializer :: UUIDSerializer :: Nil
 
   /**
    * Serializer for Joda DateTime objects in the ISO date format, which ensures that the time zone
@@ -47,18 +49,25 @@ object Serializers {
     case d: LocalDate => JString(ISODateTimeFormat.yearMonthDay.print(d))
   }))
 
-  object URISerializer extends CustomSerializer[URI](_ => ( {
+  object URISerializer extends CustomSerializer[URI](_ => ({
     case JString(s) => new URI(s)
     case JNull => null
   }, {
     case u: URI => JString(u.toString)
   }))
 
-  object URLSerializer extends CustomSerializer[URL](_ => ( {
+  object URLSerializer extends CustomSerializer[URL](_ => ({
     case JString(s) => new URL(s)
     case JNull => null
   }, {
     case u: URL => JString(u.toString)
+  }))
+
+  object UUIDSerializer extends CustomSerializer[UUID](_ => ({
+    case JString(s) => UUID.fromString(s)
+    case JNull => null
+  }, {
+    case id: UUID => JString(id.toString)
   }))
 
 }
