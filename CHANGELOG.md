@@ -1,5 +1,14 @@
 # Change log
 
+## 0.2.5 ([#9](https://git.mobcastdev.com/Platform/common-json/pull/9) 2014-11-26 17:40:51)
+
+UUID & removeDirectFields
+
+### Improvements
+
+- Added serializer/deserializer for `UUID`
+- Added `removeDirectFields` function for a `JValue`
+
 ## 0.2.4 ([#8](https://git.mobcastdev.com/Platform/common-json/pull/8) 2014-11-24 13:57:54)
 
 Updated dependencies
