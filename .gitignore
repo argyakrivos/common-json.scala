@@ -10,6 +10,11 @@ project/boot/
 project/plugins/project/
 
 # Scala-IDE specific
+.cache
+.classpath
+.project
+.settings
+
 .scala_dependencies
 .idea/
 
